@@ -4,8 +4,11 @@ import type { NextRequest } from 'next/server';
 export default function proxy(request: NextRequest) {
   const session = request.cookies.get('session');
 
-  // Protect the dashboard route
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  // Protect app and onboarding routes
+  if (
+    request.nextUrl.pathname.startsWith('/app') ||
+    request.nextUrl.pathname.startsWith('/onboarding')
+  ) {
     if (!session) {
       return NextResponse.redirect(new URL('/', request.url));
     }
@@ -14,7 +17,7 @@ export default function proxy(request: NextRequest) {
   // If attempting to access login page while having a session
   if (request.nextUrl.pathname === '/') {
     if (session) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return NextResponse.redirect(new URL('/app', request.url));
     }
   }
 
